@@ -19,6 +19,9 @@ package cmd
 
 import (
 	"fmt"
+
+	"gerrit.wikimedia.org/r/mediawiki/tools/cli/internal/exec"
+	"gerrit.wikimedia.org/r/mediawiki/tools/cli/internal/mwdd"
 	"github.com/spf13/cobra"
 )
 
@@ -26,6 +29,34 @@ var mwddMediawikiCmd = &cobra.Command{
 	Use:   "mediawiki",
 	Short: "MediaWiki service",
 	RunE:  nil,
+}
+
+var mwddMediawikiInstallCmd = &cobra.Command{
+	Use:   "install",
+	Short: "Installs a new MediaWiki site using install.php",
+	Run: func(cmd *cobra.Command, args []string) {
+		dbname := "default"
+		mwdd.DefaultForUser().Exec("mediawiki",[]string{
+			"php",
+			"/var/www/html/w/maintenance/install.php",
+			"--dbuser", "root",
+			"--dbpass", "toor",
+			"--dbname", dbname,
+			"--dbserver", "db-master",
+			"--lang", "en",
+			"--pass", "mwddpassword",
+			"docker-" + dbname,
+			"admin",
+			}, exec.HandlerOptions{})
+	},
+}
+
+var mwddMediawikiComposerCmd = &cobra.Command{
+	Use:   "composer",
+	Short: "Runs composer in a container in the context of MediaWiki",
+	Run: func(cmd *cobra.Command, args []string) {
+		fmt.Println("Not yet implemented!");
+	},
 }
 
 var mwddMediawikiCreateCmd = &cobra.Command{
@@ -66,4 +97,6 @@ func init() {
 	mwddMediawikiCmd.AddCommand(mwddMediawikiDestroyCmd)
 	mwddMediawikiCmd.AddCommand(mwddMediawikiSuspendCmd)
 	mwddMediawikiCmd.AddCommand(mwddMediawikiResumeCmd)
+	mwddMediawikiCmd.AddCommand(mwddMediawikiInstallCmd)
+	mwddMediawikiCmd.AddCommand(mwddMediawikiComposerCmd)
 }
