@@ -16,12 +16,12 @@ services:
       - MW_INSTALL_PATH=/var/www/html/w
       - VIRTUAL_HOST=*.mediawiki.mwdd.localhost
       - VIRTUAL_PORT=8080
-      - XDEBUG_CONFIG=${MEDIAWIKI_XDEBUG_CONFIG}
+      - XDEBUG_CONFIG=${MEDIAWIKI_XDEBUG_CONFIG:-}
     hostname: mediawiki.mwdd.localhost
     depends_on:
       - nginx-proxy
     dns:
-      - 172.0.0.10
+      - 10.0.0.10
     dns_search:
       - mwdd.localhost
     networks:

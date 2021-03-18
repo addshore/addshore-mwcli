@@ -19,7 +19,7 @@ GO_INSTALL := go install -v -ldflags "$(GO_LDFLAGS)"
 
 all: code mw-cli
 
-mw-cli:
+mw-cli: internal/mwdd/files/files.go
 	$(GO_BUILD) ./cmd/cli
 
 code:

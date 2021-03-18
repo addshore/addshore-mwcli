@@ -9,7 +9,7 @@ services:
     hostname: dps.mwdd.localhost
     networks:
       dps:
-        ipv4_address: 172.0.0.10
+        ipv4_address: 10.0.0.10
 
   nginx-proxy:
     # TODO: replace with jwilder/nginx-proxy, once updated
@@ -24,7 +24,7 @@ services:
       - dps
     hostname: proxy.mwdd.localhost
     dns:
-      - 172.0.0.10
+      - 10.0.0.10
     dns_search:
       - mwdd.localhost
     networks:
@@ -38,4 +38,6 @@ networks:
   dps:
     ipam:
       config:
-        - subnet: 172.0.0.0/24
+        # TODO this probably wants to be configurable? or more random? as conflicts can happen in the docker network
+        # mwdd uses 172.0.0.0/24
+        - subnet: 10.0.0.0/24
