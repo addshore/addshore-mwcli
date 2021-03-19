@@ -56,6 +56,7 @@ jobs:
     - name: Setup hosts file
       run: sudo echo "127.0.0.1 default.mediawiki.mwdd.localhost" | sudo tee -a /etc/hosts
 
+      # TODO at some point make mwdd fetch the code (also to the "right" place)
     - name: Fetch MediaWiki code to default location
       uses: actions/checkout@v2
       with:
@@ -63,8 +64,6 @@ jobs:
         path: mediawiki-code
     - name: And set that location in mwdd
       run: ./bin/mw mwdd env set MEDIAWIKI_VOLUMES_CODE $(pwd)/mediawiki-code
-    - name: mwdd env list
-      run: ./bin/mw mwdd env list
 
     - name: mwdd create
       run: ./bin/mw mwdd create
@@ -72,12 +71,6 @@ jobs:
     - name: mwdd env list
       run: ./bin/mw mwdd env list
 
-    - continue-on-error: true
-      run: docker ps -a
+    - run: docker ps -a
 
-    - continue-on-error: true
-      run: curl -s http://default.mediawiki.mwdd.localhost:8080
-    - continue-on-error: true
-      run: curl -s http://localhost:8080
-    - continue-on-error: true
-      run: curl -s http://127.0.0.1:8080
+    - run: curl -s http://default.mediawiki.mwdd.localhost:8080 | grep -q "The MediaWiki logo"
