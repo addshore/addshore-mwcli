@@ -60,7 +60,9 @@ jobs:
       uses: actions/checkout@v2
       with:
         repository: wikimedia/mediawiki
-        path: ~/dev/git/gerrit/mediawiki
+        path: mediawiki-code
+    - name: And set that location in mwdd
+      run: ./bin/mw mwdd env set MEDIAWIKI_VOLUMES_CODE $(pwd)/mediawiki-code
 
     - name: mwdd create
       run: ./bin/mw mwdd create
