@@ -67,14 +67,9 @@ jobs:
     - continue-on-error: true
       run: docker ps -a
 
-
     - continue-on-error: true
-      run: "curl -s http://default.mediawiki.mwdd.localhost:8080"
+      run: curl -s http://default.mediawiki.mwdd.localhost:8080
     - continue-on-error: true
-      run: "curl -H 'Host: default.mediawiki.mwdd.localhost' -s http://localhost:8080"
+      run: curl -s http://localhost:8080
     - continue-on-error: true
-      run: "curl -H 'Host: default.mediawiki.mwdd.localhost' -s http://127.0.0.1:8080"
-    - continue-on-error: true
-      run: "curl -s http://localhost:8080"
-    - continue-on-error: true
-      run: "curl -s http://127.0.0.1:8080"
+      run: curl -s http://127.0.0.1:8080
