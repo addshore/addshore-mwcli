@@ -63,7 +63,12 @@ var mwddMediawikiCreateCmd = &cobra.Command{
 	Use:   "create",
 	Short: "Create the Mediawiki containers",
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("Not yet implemented!");
+		mwdd.DefaultForUser().EnsureReady()
+		options := exec.HandlerOptions{
+			Verbosity:   Verbosity,
+		}
+		// TODO check mediawiki is here..
+		mwdd.DefaultForUser().UpDetached( []string{"mediawiki"}, options )
 	},
 }
 
