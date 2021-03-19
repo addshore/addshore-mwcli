@@ -76,8 +76,12 @@ var mwddMediawikiDestroyCmd = &cobra.Command{
 	Use:   "destroy",
 	Short: "Destroy the Mediawiki containers",
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("Not yet implemented!");
-	},
+		mwdd.DefaultForUser().EnsureReady()
+		options := exec.HandlerOptions{
+				Verbosity:   Verbosity,
+		}
+		mwdd.DefaultForUser().DownWithVolumesAndOrphans( options )
+},
 }
 
 var mwddMediawikiSuspendCmd = &cobra.Command{
