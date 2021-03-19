@@ -63,15 +63,14 @@ jobs:
         path: mediawiki-code
     - name: And set that location in mwdd
       run: ./bin/mw mwdd env set MEDIAWIKI_VOLUMES_CODE $(pwd)/mediawiki-code
+    - name: mwdd env list
+      run: ./bin/mw mwdd env list
 
     - name: mwdd create
       run: ./bin/mw mwdd create
 
     - name: mwdd env list
       run: ./bin/mw mwdd env list
-
-    - continue-on-error: true
-      run: sleep 10
 
     - continue-on-error: true
       run: docker ps -a
