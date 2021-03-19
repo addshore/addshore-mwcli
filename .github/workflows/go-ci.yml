@@ -65,12 +65,21 @@ jobs:
     - name: And set that location in mwdd
       run: ./bin/mw mwdd env set MEDIAWIKI_VOLUMES_CODE $(pwd)/mediawiki-code
 
+    # base create
     - name: mwdd create
       run: ./bin/mw mwdd create
 
+    # Output things useful for debugging
     - name: mwdd env list
       run: ./bin/mw mwdd env list
-
     - run: docker ps -a
 
+    # Test mediawiki create
     - run: curl -s http://default.mediawiki.mwdd.localhost:8080 | grep -q "The MediaWiki logo"
+
+    # base destroy
+    - name: mwdd destroy
+      run: ./bin/mw mwdd destroy
+
+    # Test base destroy
+    - run: docker ps | wc -l | grep -q "1"
