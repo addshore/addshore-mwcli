@@ -69,10 +69,13 @@ jobs:
     - name: mwdd create
       run: ./bin/mw mwdd create
 
+    # mwdd docker-compose ps
+    - name: mwdd docker-compose ps
+      run: ./bin/mw mwdd docker-compose ps
+
     # Output things useful for debugging
     - name: mwdd env list
       run: ./bin/mw mwdd env list
-    - run: docker ps -a
 
     # Test mediawiki create
     - run: curl -s http://default.mediawiki.mwdd.localhost:8080 | grep -q "The MediaWiki logo"
