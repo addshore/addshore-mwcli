@@ -55,7 +55,22 @@ var mwddMediawikiComposerCmd = &cobra.Command{
 	Use:   "composer",
 	Short: "Runs composer in a container in the context of MediaWiki",
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("Not yet implemented!");
+		// TODO run a composer container with the mediawiki main directory checked out (and other volumes?)
+		// as the correct user and on the correct network?
+		// READ https://github.com/addshore/mediawiki-docker-dev/blob/v1/control/src/Command/MediaWiki/Composer.php
+		//READ https://github.com/addshore/mediawiki-docker-dev/blob/v1/docker-compose/mw-composer.yml
+		mwdd.DefaultForUser().EnsureReady()
+		options := exec.HandlerOptions{
+			Verbosity:   Verbosity,
+		}
+		// TODO only run up if not already up?
+		mwdd.DefaultForUser().UpDetached( []string{"composer"}, options )
+		mwdd.DefaultForUser().Run(
+			"composer",
+			// TODO pass in other arguments
+			[]string{"info"},
+			options,
+			)
 	},
 }
 

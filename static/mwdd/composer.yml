@@ -1,0 +1,20 @@
+version: '2.2'
+
+# This service only exists to be able to run composer in its own container within the docker compose context
+# (access to the other services, DNS, volumes etc)
+
+services:
+  composer:
+    image: composer
+    scale: 0
+    entrypoint: "bash -c"
+    command: "exit 0"
+    # Run as the host user as this might create files...
+    user: "${UID}:${GID}"
+    networks:
+      - dps
+    dns:
+      - 10.0.0.10
+    #volumes:
+    #  # Don't mount anything in particular here, and allow the go code to mount thins specific to the codebase being run on?
+    # TODO mount composer cache related stuff?

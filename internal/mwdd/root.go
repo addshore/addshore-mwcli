@@ -129,6 +129,18 @@ func (m MWDD) Exec( service string, commandAndArgs []string, options exec.Handle
 	)
 }
 
+/*Run ...*/
+func (m MWDD) Run( service string, commandAndArgs []string, options exec.HandlerOptions ) {
+	m.DockerCompose(
+		"run",
+		// TODO allow more custom docker args, live env vars and volumes?
+		[]string{"--rm"},
+		[]string{service},
+		commandAndArgs,
+		options,
+	)
+}
+
 /*UpDetached ...*/
 func (m MWDD) UpDetached( services []string, options exec.HandlerOptions ) {
 	m.DockerCompose(
@@ -175,7 +187,6 @@ func (m MWDD) Start( services []string, options exec.HandlerOptions ) {
 
 // TODO more from https://github.com/addshore/mediawiki-docker-dev/blob/4d380cf638bc60b5b6c22853a199639a3eb70b0b/control/src/Shell/DockerCompose.php#L53
 // TODO execIt?
-// TODO run?
 // TODO runDetatched?
 // TODO logsTail?
 // TODO raw?
