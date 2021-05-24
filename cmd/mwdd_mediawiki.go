@@ -330,11 +330,32 @@ var mwddMediawikiComposerCmd = &cobra.Command{
 	Example:   "  composer info\n  composer install -- --ignore-platform-reqs",
 	Run: func(cmd *cobra.Command, args []string) {
 		mwdd.DefaultForUser().EnsureReady()
-		mwdd.DefaultForUser().DockerExec(applyRelevantWorkingDirectory(mwdd.DockerExecCommand{
+		mwdd.DefaultForUser().DockerExec(mwdd.DockerExecCommand{
 			DockerComposeService: "mediawiki",
 			Command: append([]string{"composer"},args...),
+			WorkingDir: relevantWorkingDirectory(),
 			User: User,
-		}))
+		})
+	},
+}
+
+var mwddMediawikiNpmCmd = &cobra.Command{
+	Use:   "npm",
+	Short: "Runs npm in a container in the context of MediaWiki",
+	Run: func(cmd *cobra.Command, args []string) {
+		mwdd.DefaultForUser().EnsureReady()
+		currentWorkingDirectory, _ := os.Getwd()
+		usr, _ := user.Current()
+		usrDir := usr.HomeDir
+		// TODO don't let the user run npm if they are not in a mediawiki directory
+		mwdd.DefaultForUser().DockerRun(mwdd.DockerRunCommand{
+			CustomContainerSuffix: "npm",
+			Image: "docker-registry.wikimedia.org/releng/node10-test-browser:0.6.3-s2",
+			Command: append([]string{"npm"},args...),
+			WorkingDir: currentWorkingDirectory,
+			User: User,
+			MountInPlace: []string{usrDir+"/.npm", mwdd.DefaultForUser().Env().Get("MEDIAWIKI_VOLUMES_CODE")},
+		})
 	},
 }
 
@@ -395,11 +416,12 @@ var mwddMediawikiPhpunitCmd = &cobra.Command{
 	Short: "Runs MediaWiki phpunit in the MediaWiki container",
 	Run: func(cmd *cobra.Command, args []string) {
 		mwdd.DefaultForUser().EnsureReady()
-		mwdd.DefaultForUser().DockerExec(applyRelevantWorkingDirectory(mwdd.DockerExecCommand{
+		mwdd.DefaultForUser().DockerExec(mwdd.DockerExecCommand{
 			DockerComposeService: "mediawiki",
 			Command: append([]string{"php", "/var/www/html/w/tests/phpunit/phpunit.php"},args...),
+			WorkingDir: relevantWorkingDirectory(),
 			User: User,
-		}))
+		})
 	},
 }
 
@@ -417,17 +439,15 @@ var mwddMediawikiExecCmd = &cobra.Command{
 	},
 }
 
-var applyRelevantWorkingDirectory = func( dockerExecCommand mwdd.DockerExecCommand ) mwdd.DockerExecCommand  {
+var relevantWorkingDirectory = func( ) string  {
 	currentWorkingDirectory, _ := os.Getwd()
 	mountedMwDirectory := mwdd.DefaultForUser().Env().Get("MEDIAWIKI_VOLUMES_CODE")
 	// For paths inside the mediawiki path
-	if( strings.HasPrefix( currentWorkingDirectory,mountedMwDirectory ) ) {
-		dockerExecCommand.WorkingDir = strings.Replace(currentWorkingDirectory, mountedMwDirectory, "/var/www/html/w", 1)
-	} else {
+	if( !strings.HasPrefix( currentWorkingDirectory,mountedMwDirectory ) ) {
 		fmt.Println("This command is not supported outside of the MediaWiki core directory: " + mountedMwDirectory)
 		os.Exit(1)
 	}
-	return dockerExecCommand
+	return strings.Replace(currentWorkingDirectory, mountedMwDirectory, "/var/www/html/w", 1)
 }
 
 func init() {
@@ -439,6 +459,8 @@ func init() {
 	mwddMediawikiCmd.AddCommand(mwddMediawikiInstallCmd)
 	mwddMediawikiInstallCmd.Flags().StringVarP(&DbName, "dbname", "", "default", "Name of the database to install (must be accepted by MediaWiki, stick to letters and numbers)")
 	mwddMediawikiInstallCmd.Flags().StringVarP(&DbType, "dbtype", "", "sqlite", "Type of database to install (sqlite, mysql, postgres)")
+	mwddMediawikiCmd.AddCommand(mwddMediawikiNpmCmd)
+	mwddMediawikiNpmCmd.Flags().StringVarP(&User, "user", "u", mwdd.UserAndGroupForDockerExecution(), "User to run as, defaults to current OS user uid:gid")
 	mwddMediawikiCmd.AddCommand(mwddMediawikiComposerCmd)
 	mwddMediawikiComposerCmd.Flags().StringVarP(&User, "user", "u", mwdd.UserAndGroupForDockerExecution(), "User to run as, defaults to current OS user uid:gid")
 	mwddMediawikiCmd.AddCommand(mwddMediawikiPhpunitCmd)
