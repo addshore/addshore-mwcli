@@ -28,19 +28,19 @@ cat ~/.mwcli/mwdd/default/.env
 
 # Install & check
 ./mw mwdd mediawiki install --dbname mysqlwiki --dbtype mysql
-CURL=$(curl -s -L -N http://mysqlwiki.mwdd.localhost:8080) && echo $CURL && echo $CURL | grep -q "MediaWiki has been installed"
+CURL=$(curl -s -L -N http://mysqlwiki.mediawiki.mwdd.localhost:8080) && echo $CURL && echo $CURL | grep -q "MediaWiki has been installed"
 
 # Suspend and resume and check the site is still there
 ./mw mwdd mysql suspend
 ./mw mwdd mysql resume
 sleep 2
-CURL=$(curl -s -L -N http://mysqlwiki.mwdd.localhost:8080) && echo $CURL && echo $CURL | grep -q "MediaWiki has been installed"
+CURL=$(curl -s -L -N http://mysqlwiki.mediawiki.mwdd.localhost:8080) && echo $CURL && echo $CURL | grep -q "MediaWiki has been installed"
 
 # Destroy and restart mysql, reinstalling mediawiki
 ./mw mwdd mysql destroy
 ./mw mwdd mysql create
 ./mw mwdd mediawiki install --dbname mysqlwiki --dbtype mysql
-CURL=$(curl -s -L -N http://mysqlwiki.mwdd.localhost:8080) && echo $CURL && echo $CURL | grep -q "MediaWiki has been installed"
+CURL=$(curl -s -L -N http://mysqlwiki.mediawiki.mwdd.localhost:8080) && echo $CURL && echo $CURL | grep -q "MediaWiki has been installed"
 
 # Destroy it all
 ./mw mwdd destroy

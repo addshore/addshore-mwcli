@@ -44,9 +44,9 @@ CURL=$(curl -s -L -N http://phpmyadmin.mwdd.localhost:8080) && echo $CURL && ech
 CURL=$(curl -s -L -N http://adminer.mwdd.localhost:8080) && echo $CURL && echo $CURL | grep -q "Login - Adminer"
 
 # And check the installed sites
-CURL=$(curl -s -L -N http://default.mwdd.localhost:8080) && echo $CURL && echo $CURL | grep -q "MediaWiki has been installed"
-CURL=$(curl -s -L -N http://postgreswiki.mwdd.localhost:8080) && echo $CURL && echo $CURL | grep -q "MediaWiki has been installed"
-CURL=$(curl -s -L -N http://mysqlwiki.mwdd.localhost:8080) && echo $CURL && echo $CURL | grep -q "MediaWiki has been installed"
+CURL=$(curl -s -L -N http://default.mediawiki.mwdd.localhost:8080) && echo $CURL && echo $CURL | grep -q "MediaWiki has been installed"
+CURL=$(curl -s -L -N http://postgreswiki.mediawiki.mwdd.localhost:8080) && echo $CURL && echo $CURL | grep -q "MediaWiki has been installed"
+CURL=$(curl -s -L -N http://mysqlwiki.mediawiki.mwdd.localhost:8080) && echo $CURL && echo $CURL | grep -q "MediaWiki has been installed"
 
 # Make sure the expected number of services appear
 docker ps
