@@ -23,10 +23,8 @@ import (
 	"os"
 	"os/user"
 	"path/filepath"
-	"strings"
 	"time"
 
-	"github.com/blang/semver"
 	"github.com/rhysd/go-github-selfupdate/selfupdate"
 )
 
@@ -40,7 +38,8 @@ func CanUpdateDaily(currentVersion string, gitSummary string, verboseOutput bool
 		return false, nil
 	}
 	setCheckedTime(now)
-	return CanUpdate(currentVersion, gitSummary, verboseOutput)
+	// TODO switch update behavior based on config of "stable" or "alpha"
+	return CanUpdateFromAddshore(currentVersion, gitSummary, verboseOutput)
 }
 
 func lastCheckedTime() time.Time {
@@ -82,64 +81,4 @@ func ensureDirectoryOnDisk(dirPath string) {
 	if _, err := os.Stat(dirPath); err != nil {
 		os.MkdirAll(dirPath, 0755)
 	}
-}
-
-/*CanUpdate ...*/
-func CanUpdate(currentVersion string, gitSummary string, verboseOutput bool) (bool, *selfupdate.Release) {
-	if(verboseOutput){
-		selfupdate.EnableLog()
-	}
-
-	// TODO when builds are on wm.o then allow for a "dev" or "stable" update option and checks
-
-	v, err := semver.Parse(strings.Trim(gitSummary,"v"))
-	if err != nil {
-		if(verboseOutput){
-			log.Println("Could not parse git summary version, maybe you are not using a real release?")
-		}
-		return false, nil
-	}
-
-	rel, ok, err := selfupdate.DetectLatest("addshore/mwcli")
-	if err != nil {
-		if(verboseOutput){
-			log.Println("Some unknown error occurred")
-		}
-		return false, rel
-	}
-	if !ok {
-		if(verboseOutput){
-			log.Println("No release detected. Current version is considered up-to-date")
-		}
-		return false, rel
-	}
-	if v.Equals(rel.Version) {
-		if(verboseOutput){
-			log.Println("Current version", v, "is the latest. Update is not needed")
-		}
-		return false, rel
-	}
-	if(verboseOutput){
-		log.Println("Update available", rel.Version)
-	}
-	return true, rel
-}
-
-/*UpdateTo ...*/
-func UpdateTo(release selfupdate.Release, verboseOutput bool) (success bool, message string) {
-	if(verboseOutput){
-		selfupdate.EnableLog()
-	}
-
-	cmdPath, err := os.Executable()
-	if err != nil {
-		return false, "Failed to grab local executable location"
-	}
-
-	err = selfupdate.UpdateTo(release.AssetURL, cmdPath)
-	if err != nil {
-		return false, "Binary update failed" + err.Error()
-	}
-
-	return true, "Successfully updated to version" + release.Version.String() + "\nRelease note:\n" + release.ReleaseNotes
 }

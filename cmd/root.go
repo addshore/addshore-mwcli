@@ -116,6 +116,8 @@ func Execute(GitCommitIn string, GitBranchIn string, GitStateIn string, GitSumma
 		c = config.LoadFromDisk()
 	}
 
+	// TODO ask the user about being on stable or dev builds? and save to config?
+
 	// mwdd mode
 	if c.DevMode == config.ConfigDevModeMwdd {
 		mwddCmd.Aliases = []string{"dev"}

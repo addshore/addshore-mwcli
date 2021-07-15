@@ -44,7 +44,9 @@ var updateCmd = &cobra.Command{
 	Short: "Checks for and performs updates",
 	Run: func(cmd *cobra.Command, args []string) {
 
-		canUpdate, nextRelease := updater.CanUpdate(Version, GitSummary, Verbosity >= 2)
+		// TODO switch update behaviour based on config of "stable" or "alpha"
+
+		canUpdate, nextRelease := updater.CanUpdateFromAddshore(Version, GitSummary, Verbosity >= 2)
 		if !canUpdate || nextRelease == nil {
 			fmt.Println("No update available")
 			os.Exit(0)
